@@ -13,7 +13,7 @@ enum Match {
 
 // This function is excessively complicated and slow due to the duplicate letter problem. I'm sure
 // it can be substantially improved upon.
-fn match_word(word: [char; 5], guess: [char; 5]) -> [Match; 5] {
+fn match_word(word: [u8; 5], guess: [u8; 5]) -> [Match; 5] {
     let mut out = [Match::NoMatch; 5];
     // First assign the matches without duplicates. We'll clean those up later.
     for i in 0..5 {
@@ -66,15 +66,15 @@ fn match_word(word: [char; 5], guess: [char; 5]) -> [Match; 5] {
     out
 }
 
-fn str_to_array(s: &str) -> [char; 5] {
-    let mut out: [char; 5] = Default::default();
-    for (c, o) in s.chars().zip(&mut out) {
+fn str_to_array(s: &str) -> [u8; 5] {
+    let mut out: [u8; 5] = Default::default();
+    for (c, o) in s.bytes().zip(&mut out) {
         *o = c;
     }
     out
 }
 
-fn filter_match_no_dup(word: [char; 5], guess: [char; 5], matches: [Match; 5]) -> bool {
+fn filter_match_no_dup(word: [u8; 5], guess: [u8; 5], matches: [Match; 5]) -> bool {
     for i in 0..5 {
         if matches[i] == Match::Matched && word[i] != guess[i] {
             return false;
@@ -95,7 +95,7 @@ fn filter_match_no_dup(word: [char; 5], guess: [char; 5], matches: [Match; 5]) -
 
 // When there are duplicate characters, you have to consider the whole word an not just
 // character by character.
-fn filter_match_dup(word: [char; 5], guess: [char; 5], matches: [Match; 5]) -> bool {
+fn filter_match_dup(word: [u8; 5], guess: [u8; 5], matches: [Match; 5]) -> bool {
     for i in 0..5 {
         if matches[i] == Match::Matched && word[i] != guess[i] {
             return false;
@@ -139,7 +139,7 @@ fn filter_match_dup(word: [char; 5], guess: [char; 5], matches: [Match; 5]) -> b
     true
 }
 
-fn has_duplicate(w: [char; 5]) -> bool {
+fn has_duplicate(w: [u8; 5]) -> bool {
     for i in 0..5 {
         for j in i + 1..5 {
             if w[i] == w[j] {
@@ -150,7 +150,7 @@ fn has_duplicate(w: [char; 5]) -> bool {
     false
 }
 
-fn filter_match(word: [char; 5], guess: [char; 5], matches: [Match; 5]) -> bool {
+fn filter_match(word: [u8; 5], guess: [u8; 5], matches: [Match; 5]) -> bool {
     // TODO: This fast path might actually not be necessary...
     if has_duplicate(guess) {
         filter_match_dup(word, guess, matches)
@@ -159,7 +159,7 @@ fn filter_match(word: [char; 5], guess: [char; 5], matches: [Match; 5]) -> bool 
     }
 }
 
-fn filter_words(words: &mut Vec<[char; 5]>, guess: [char; 5], matches: [Match; 5]) {
+fn filter_words(words: &mut Vec<[u8; 5]>, guess: [u8; 5], matches: [Match; 5]) {
     words.retain(|w| filter_match(*w, guess, matches));
 }
 
@@ -215,7 +215,7 @@ mod tests {
     use super::*;
     use Match::*;
 
-    fn a(w: &str) -> [char; 5] {
+    fn a(w: &str) -> [u8; 5] {
         str_to_array(w)
     }
 
